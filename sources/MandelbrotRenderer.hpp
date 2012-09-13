@@ -31,19 +31,21 @@
 #ifdef OMP_BUILD
 
 #include <SFML/System/Vector2.hpp>
+#include <gmp/gmp.h>
 
 class MandelbrotRenderer {
 	unsigned char *m_pixelBuffer;
 	unsigned m_pixelBufferWidth;
 	unsigned m_pixelBufferHeigth;
 	
-	double m_zoom;
+	mpf_t m_zoom;
 	int m_resolution;
-	Vector2lf m_normalizedPosition;
+	mpf_t m_x, m_y;
 	
 public:
 	MandelbrotRenderer(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
-					   double zoom, int resolution, const Vector2lf& normalizedPosition);
+					   mpf_t& zoom, int resolution, mpf_t& x, mpf_t& y);
+	~MandelbrotRenderer();
 	
 	void operator()() const;
 };

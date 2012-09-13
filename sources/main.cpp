@@ -27,6 +27,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Application.hpp"
+#include <gmp/gmp.h>
 
 int main()
 {
