@@ -67,7 +67,6 @@ private:
 	sf::Time m_lastRenderingTime;
 
 #ifdef CL_BUILD
-	OpenCLDevice m_openclDevice;
 	std::unique_ptr<MandelbrotRendererCL> m_renderer;
 #endif
 	

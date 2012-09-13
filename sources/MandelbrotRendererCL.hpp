@@ -21,7 +21,6 @@
  *
  *  3. This notice may not be removed or altered from any
  *  source distribution.
- *
  */
 
 #include "Common.hpp"
@@ -31,7 +30,6 @@
 #define MANDELBROT_RENDERER_CL_HPP
 
 #include <SFML/System/Vector2.hpp>
-#include "OpenCLDevice.h"
 #include "epgpu.h"
 
 class MandelbrotRendererCL {
@@ -42,7 +40,7 @@ class MandelbrotRendererCL {
 	gpu_vector2d<unsigned char> m_img;
 	
 public:
-	MandelbrotRendererCL(OpenCLDevice* device, unsigned char *pixelBuffer, unsigned width, unsigned heigth);
+	MandelbrotRendererCL(unsigned char *pixelBuffer, unsigned width, unsigned heigth);
 	
 	void operator()(double zoom, int resolution, const Vector2lf& normalizedPosition);
 };

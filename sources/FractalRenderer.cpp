@@ -57,7 +57,7 @@ m_lastRenderingTime(sf::Time::Zero)
 		std::cout << "texture size is too big for your crapy graphics card" << std::endl;
 	}
 
-	m_renderer.reset(new MandelbrotRendererCL(&m_openclDevice, m_data, m_image_x, m_image_y));
+	m_renderer.reset(new MandelbrotRendererCL(m_data, m_image_x, m_image_y));
 }
 
 FractalRenderer::~FractalRenderer()

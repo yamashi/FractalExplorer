@@ -58,7 +58,7 @@ GPU_FILLKERNEL_2D(unsigned char,
 	result=count;
 )
 
-MandelbrotRendererCL::MandelbrotRendererCL(OpenCLDevice* device, unsigned char *pixelBuffer, unsigned width, unsigned heigth):
+MandelbrotRendererCL::MandelbrotRendererCL(unsigned char *pixelBuffer, unsigned width, unsigned heigth):
 m_pixelBuffer(pixelBuffer),
 m_pixelBufferWidth(width),
 m_pixelBufferHeigth(heigth),
