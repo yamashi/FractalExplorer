@@ -23,10 +23,15 @@
  *  3. This notice may not be removed or altered from any
  *  source distribution.
  *
+ *
+ * Source altered by Maxime Griot
  */
 
 #include "FractalRenderer.hpp"
+#ifdef TBB_BUILD
+#include "MandelbrotRenderer.hpp"
 #include <tbb/parallel_for.h>
+#endif
 #include <iostream>
 
 
@@ -41,7 +46,7 @@ m_image_y(heigth),
 m_lastRenderingTime(sf::Time::Zero)
 {
 	m_data = new unsigned char[m_image_x * m_image_y * 4];
-	bzero(m_data, m_image_x * m_image_y * 4);
+	std::memset(m_data, 0, m_image_x * m_image_y * 4);
 	
 	if (m_texture.create(m_image_x, m_image_y))
 	{
@@ -51,6 +56,8 @@ m_lastRenderingTime(sf::Time::Zero)
 	{
 		std::cout << "texture size is too big for your crapy graphics card" << std::endl;
 	}
+
+	m_renderer.reset(new MandelbrotRendererCL(&m_openclDevice, m_data, m_image_x, m_image_y));
 }
 
 FractalRenderer::~FractalRenderer()
@@ -65,9 +72,14 @@ void FractalRenderer::performRendering(void)
 		   m_data, m_image_x, m_image_y, m_scale, m_resolution, m_normalizedPosition.x, m_normalizedPosition.y);
 	
 	sf::Clock timer;
+
+#ifdef TBB_BUILD
 	parallel_for(tbb::blocked_range2d<unsigned, unsigned>(0, m_image_x, 50, 0, m_image_y, 50),
 				 MandelbrotRenderer(m_data, m_image_x, m_image_y, m_scale, m_resolution, m_normalizedPosition));
-	
+#else
+	m_renderer->operator()(m_scale, m_resolution, m_normalizedPosition);
+#endif
+
 	m_texture.update(m_data);
 	m_lastRenderingTime = timer.getElapsedTime();
 }

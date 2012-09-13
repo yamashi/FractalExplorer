@@ -1,7 +1,6 @@
-
 /*
- *  MandelbrotRenderer.hpp
- *	Mandelbrot Fractal Explorer Project - Copyright (c) 2012 Lucas Soltic
+ *  MandelbrotRendererCL.hpp
+ *	Mandelbrot Fractal Explorer Project - Copyright (c) 2012 Lucas Soltic & Maxime Griot
  *
  *  This software is provided 'as-is', without any express or
  *  implied warranty. In no event will the authors be held
@@ -25,30 +24,28 @@
  *
  */
 
-#ifndef MANDELBROT_RENDERER_HPP
-#define MANDELBROT_RENDERER_HPP
+#include "Common.hpp"
+#ifdef CL_BUILD
 
-#ifdef TBB_BUILD
+#ifndef MANDELBROT_RENDERER_CL_HPP
+#define MANDELBROT_RENDERER_CL_HPP
 
 #include <SFML/System/Vector2.hpp>
-#include <tbb/blocked_range2d.h>
+#include "OpenCLDevice.h"
+#include "epgpu.h"
 
-class MandelbrotRenderer {
+class MandelbrotRendererCL {
 	unsigned char *m_pixelBuffer;
 	unsigned m_pixelBufferWidth;
 	unsigned m_pixelBufferHeigth;
-	
-	double m_zoom;
-	int m_resolution;
-	Vector2lf m_normalizedPosition;
+
+	gpu_vector2d<unsigned char> m_img;
 	
 public:
-	MandelbrotRenderer(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
-					   double zoom, int resolution, const Vector2lf& normalizedPosition);
+	MandelbrotRendererCL(OpenCLDevice* device, unsigned char *pixelBuffer, unsigned width, unsigned heigth);
 	
-	void operator()(const tbb::blocked_range2d<unsigned, unsigned>& range) const;
+	void operator()(double zoom, int resolution, const Vector2lf& normalizedPosition);
 };
 
 #endif
-
 #endif

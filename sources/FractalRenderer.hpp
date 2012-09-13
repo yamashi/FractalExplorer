@@ -29,7 +29,11 @@
 #define FRACTAL_RENDERER_HPP
 
 #include <SFML/Graphics.hpp>
-#include "MandelbrotRenderer.hpp"
+#include "Common.hpp"
+
+#ifdef CL_BUILD
+#include "MandelbrotRendererCL.hpp"
+#endif
 
 class FractalRenderer {
 public:
@@ -61,6 +65,11 @@ private:
 	int m_image_y;
 	
 	sf::Time m_lastRenderingTime;
+
+#ifdef CL_BUILD
+	OpenCLDevice m_openclDevice;
+	std::unique_ptr<MandelbrotRendererCL> m_renderer;
+#endif
 	
 };
 

@@ -23,10 +23,14 @@
  *  3. This notice may not be removed or altered from any
  *  source distribution.
  *
+ *
+ * Source altered by Maxime Griot
  */
 
 #include "Application.hpp"
-#include "ResourcePath.hpp"
+#ifndef WIN32
+	#include "ResourcePath.hpp"
+#endif
 #include <Thor/Shapes.hpp>
 #include <sstream>
 #include <ctime>
@@ -67,9 +71,14 @@ m_actionsTable(window),
 m_fractalRenderer(m_window.getSize().x, m_window.getSize().y),
 m_panelsAreVisible(true)
 {
+#ifndef WIN32
 	m_textFont.loadFromFile(resourcePath() + "sansation.ttf");
 	m_cameraSoundBuffer.loadFromFile(resourcePath() + "camera.wav");
-	
+#else
+	m_textFont.loadFromFile("sansation.ttf");
+	m_cameraSoundBuffer.loadFromFile("camera.wav");
+#endif
+
 	m_infoText.setCharacterSize(18);
 	m_infoText.setStyle(sf::Text::Regular);
 	m_infoText.setFont(m_textFont);
@@ -122,7 +131,7 @@ m_panelsAreVisible(true)
 	m_fractalInfoShape.setPosition(finfoPos);
 	
 	// Define actions
-	m_actionsTable["exit"] = thor::Action(sf::Keyboard::Escape, thor::Action::PressOnce) or thor::Action(sf::Event::Closed);
+	m_actionsTable["exit"] = thor::Action(sf::Keyboard::Escape, thor::Action::PressOnce) || thor::Action(sf::Event::Closed);
 	
 	m_actionsTable["reset view"] = thor::Action(sf::Keyboard::R, thor::Action::PressOnce);
 	m_actionsTable["screenshot"] = thor::Action(sf::Keyboard::S, thor::Action::PressOnce);

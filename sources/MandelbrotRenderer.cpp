@@ -25,6 +25,8 @@
  *
  */
 
+#ifdef TBB_BUILD
+
 #include "MandelbrotRenderer.hpp"
 #include <iostream>
 #include <SFML/System.hpp>
@@ -93,3 +95,5 @@ void MandelbrotRenderer::operator()(const tbb::blocked_range2d<unsigned, unsigne
 		}
 	}
 }
+
+#endif
