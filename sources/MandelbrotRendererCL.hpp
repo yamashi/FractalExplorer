@@ -37,7 +37,7 @@ class MandelbrotRendererCL {
 	unsigned m_pixelBufferWidth;
 	unsigned m_pixelBufferHeigth;
 
-	gpu_vector2d<unsigned char> m_img;
+	gpu_vector2d<unsigned int> m_img;
 	
 public:
 	MandelbrotRendererCL(unsigned char *pixelBuffer, unsigned width, unsigned heigth);

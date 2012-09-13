@@ -23,9 +23,12 @@
  *  3. This notice may not be removed or altered from any
  *  source distribution.
  *
+ * Altered by Maxime Griot
  */
 
-#ifdef TBB_BUILD
+#include "Common.hpp"
+
+#ifdef OMP_BUILD
 
 #include "MandelbrotRenderer.hpp"
 #include <iostream>
@@ -42,42 +45,53 @@ m_normalizedPosition(normalizedPosition)
 {
 }
 
-
-void MandelbrotRenderer::operator()(const tbb::blocked_range2d<unsigned, unsigned>& range) const
+struct ldouble2
 {
-	const double fractal_left = -2.1;
-	const double fractal_right = 0.6;
-	const double fractal_bottom = -1.2;
-	const double fractal_top = 1.2;
+	long double x;
+	long double y;
+};
+
+void MandelbrotRenderer::operator()() const
+{
+	const long double fractal_left = -2.1;
+	const long double fractal_right = 0.6;
+	const long double fractal_bottom = -1.2;
+	const long double fractal_top = 1.2;
 	
 	//double zoom_x = m_zoom * m_pixelBufferWidth / (fractal_right - fractal_left);
-	double zoom_y = m_zoom * m_pixelBufferHeigth / (fractal_top - fractal_bottom);
-	double zoom_x = zoom_y;
+	long double zoom_y = m_zoom * m_pixelBufferHeigth / (fractal_top - fractal_bottom);
+	long double zoom_x = zoom_y;
 	
-	int64_t fractal_width = m_pixelBufferWidth * m_zoom;
-	int64_t fractal_heigth = m_pixelBufferHeigth * m_zoom;
+	long double fractal_width = m_pixelBufferWidth * m_zoom;
+	long double fractal_heigth = m_pixelBufferHeigth * m_zoom;
 	
-	for (unsigned image_x = range.rows().begin(); image_x != range.rows().end(); image_x++)
+	#pragma omp parallel for
+	for (int image_x = 0; image_x < m_pixelBufferWidth; ++image_x)
 	{
-		for (unsigned image_y = range.cols().begin(); image_y != range.cols().end(); image_y++)
+		for (int image_y = 0; image_y < m_pixelBufferHeigth; ++image_y)
 		{
-			int64_t fractal_x = fractal_width * m_normalizedPosition.x - m_pixelBufferWidth / 2 + image_x;
-			int64_t fractal_y = fractal_heigth * m_normalizedPosition.y - m_pixelBufferHeigth / 2 + image_y;
-			
-			double c_r = fractal_x / (double)zoom_x + fractal_left;
-			double c_i = fractal_y / (double)zoom_y + fractal_bottom;
-			double z_r = 0;
-			double z_i = 0;
-			double i   = 0;
-			
-			do{
-				double tmp = z_r;
-				z_r = z_r * z_r - z_i * z_i + c_r;
-				z_i = 2 * tmp * z_i + c_i;
-				i++;
-			} while (z_r * z_r + z_i * z_i < 4 && i < m_resolution);
-			
-			if (i == m_resolution)
+			long double fractal_x = fractal_width * m_normalizedPosition.x - m_pixelBufferWidth / 2 + image_x;
+			long double fractal_y = fractal_heigth * m_normalizedPosition.y - m_pixelBufferHeigth / 2 + image_y;
+
+			ldouble2 c= {
+				fractal_x / (double)zoom_x + fractal_left,
+				fractal_y / (double)zoom_y + fractal_bottom
+			};
+			ldouble2 z=c;
+
+			int count;
+			for (count=0;count<m_resolution;count++)
+			{
+				if ((z.x*z.x+z.y*z.y)>4.0f) 
+					break;
+				ldouble2 t = {
+					z.x*z.x-z.y*z.y + c.x,
+					2.0f*z.x*z.y + c.y
+				};
+				z=std::move(t);
+			}
+		
+			if (count == m_resolution)
 			{
 				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 0] = 0;
 				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 1] = 54;
@@ -86,10 +100,10 @@ void MandelbrotRenderer::operator()(const tbb::blocked_range2d<unsigned, unsigne
 			}
 			else
 			{
-				int val = i * 255 / m_resolution;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 0] = val;
+				int val = count * 255 / m_resolution;
+				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 0] = 0;
 				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 1] = 0;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 2] = 0;
+				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 2] = val;
 				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 3] = 255;
 			}
 		}

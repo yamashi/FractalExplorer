@@ -28,7 +28,7 @@
  */
 
 #include "FractalRenderer.hpp"
-#ifdef TBB_BUILD
+#ifdef OMP_BUILD
 #include "MandelbrotRenderer.hpp"
 #include <tbb/parallel_for.h>
 #endif
@@ -57,7 +57,9 @@ m_lastRenderingTime(sf::Time::Zero)
 		std::cout << "texture size is too big for your crapy graphics card" << std::endl;
 	}
 
+#ifdef CL_BUILD
 	m_renderer.reset(new MandelbrotRendererCL(m_data, m_image_x, m_image_y));
+#endif
 }
 
 FractalRenderer::~FractalRenderer()
@@ -73,9 +75,8 @@ void FractalRenderer::performRendering(void)
 	
 	sf::Clock timer;
 
-#ifdef TBB_BUILD
-	parallel_for(tbb::blocked_range2d<unsigned, unsigned>(0, m_image_x, 50, 0, m_image_y, 50),
-				 MandelbrotRenderer(m_data, m_image_x, m_image_y, m_scale, m_resolution, m_normalizedPosition));
+#ifdef OMP_BUILD
+	MandelbrotRenderer(m_data, m_image_x, m_image_y, m_scale, m_resolution, m_normalizedPosition)();
 #else
 	m_renderer->operator()(m_scale, m_resolution, m_normalizedPosition);
 #endif

@@ -32,7 +32,7 @@
 #include <iostream>
 #include <SFML/System.hpp>
 
-GPU_FILLKERNEL_2D(unsigned char,
+GPU_FILLKERNEL_2D(unsigned int,
 	mandelbrot,(double sz, double zoom, double xoff,double yoff, int resolution),
 
 	double fw = w * sz;
@@ -70,7 +70,7 @@ m_img(width, heigth)
 void MandelbrotRendererCL::operator()(double zoom, int resolution,const Vector2lf& normalizedPosition)
 {
 	m_img = mandelbrot(zoom, zoom * m_pixelBufferHeigth / (2.4),normalizedPosition.x,normalizedPosition.y, resolution);
-	unsigned char* ca = new unsigned char[m_pixelBufferWidth*m_pixelBufferHeigth];
+	unsigned int* ca = new unsigned int[m_pixelBufferWidth*m_pixelBufferHeigth];
 	m_img.read(ca);
 	for(unsigned x = 0; x < m_pixelBufferWidth;++x)
 		for(unsigned y = 0; y < m_pixelBufferHeigth;++y)
@@ -85,9 +85,9 @@ void MandelbrotRendererCL::operator()(double zoom, int resolution,const Vector2l
 			else
 			{
 				int val = ca[y * m_pixelBufferWidth + x] * 255 / resolution;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 0] = val;
+				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 0] = 0;
 				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 1] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = 0;
+				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = val;
 				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 3] = 255;
 			}
 		}

@@ -28,10 +28,9 @@
 #ifndef MANDELBROT_RENDERER_HPP
 #define MANDELBROT_RENDERER_HPP
 
-#ifdef TBB_BUILD
+#ifdef OMP_BUILD
 
 #include <SFML/System/Vector2.hpp>
-#include <tbb/blocked_range2d.h>
 
 class MandelbrotRenderer {
 	unsigned char *m_pixelBuffer;
@@ -46,7 +45,7 @@ public:
 	MandelbrotRenderer(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
 					   double zoom, int resolution, const Vector2lf& normalizedPosition);
 	
-	void operator()(const tbb::blocked_range2d<unsigned, unsigned>& range) const;
+	void operator()() const;
 };
 
 #endif

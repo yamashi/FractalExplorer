@@ -30,7 +30,7 @@
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Mandelbrot Fractal Explorer", sf::Style::Fullscreen);
+	sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Mandelbrot Fractal Explorer", sf::Style::Default);
 	window.setFramerateLimit(60);
 	window.setMouseCursorVisible(false);
 	

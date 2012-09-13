@@ -4,8 +4,9 @@
 #include <SFML/System.hpp>
 #include <cstdint>
 
-typedef sf::Vector2<double>        Vector2lf;
+typedef sf::Vector2<long double>        Vector2lf;
 
-#define CL_BUILD
+//#define CL_BUILD
+#define OMP_BUILD
 
 #endif
