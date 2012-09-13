@@ -52,8 +52,13 @@ public:
 	const sf::Time& getLastRenderingTime(void);
 	
 	const sf::Texture& getTexture(void);
+
+	bool isRendering;
 	
 private:
+
+	void _performRendering(void);
+
 	unsigned char *m_data;
 	unsigned m_dataSize;
 	sf::Texture m_texture;

@@ -68,8 +68,15 @@ FractalRenderer::~FractalRenderer()
 }
 
 #include <cstdio>
-void FractalRenderer::performRendering(void)
+
+void FractalRenderer::performRendering()
 {
+	_performRendering();
+}
+
+void FractalRenderer::_performRendering(void)
+{
+	isRendering = true;
 	printf("data=%p, width=%d, heigth=%d, zoom=%f, resolution=%d, posx=%f, posy=%f\n",
 		   m_data, m_image_x, m_image_y, m_scale, m_resolution, m_normalizedPosition.x, m_normalizedPosition.y);
 	
@@ -91,10 +98,14 @@ void FractalRenderer::performRendering(void)
 	mpf_clear(posy);
 #else
 	m_renderer->operator()(m_scale, m_resolution, m_normalizedPosition);
+	
 #endif
 
 	m_texture.update(m_data);
+	
 	m_lastRenderingTime = timer.getElapsedTime();
+
+	isRendering = false;
 }
 
 void FractalRenderer::setZoom(double zoom)
