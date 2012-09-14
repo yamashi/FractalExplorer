@@ -10,3 +10,10 @@
 *.lai
 *.la
 *.a
+obj/*
+binaries/*
+dependencies/headers/CL/.svn/
+sources/ipch/
+*.opensdf
+*.sdf
+*.suo

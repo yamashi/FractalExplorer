@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FractalExplorer", "FractalExplorer.vcxproj", "{45F860EB-1883-41ED-9653-5F8F83FA2A6E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45F860EB-1883-41ED-9653-5F8F83FA2A6E}.Debug|x64.ActiveCfg = Debug|x64
+		{45F860EB-1883-41ED-9653-5F8F83FA2A6E}.Debug|x64.Build.0 = Debug|x64
+		{45F860EB-1883-41ED-9653-5F8F83FA2A6E}.Release|x64.ActiveCfg = Release|x64
+		{45F860EB-1883-41ED-9653-5F8F83FA2A6E}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
