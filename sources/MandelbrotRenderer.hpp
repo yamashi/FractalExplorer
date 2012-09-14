@@ -31,7 +31,7 @@
 #ifdef OMP_BUILD
 
 #include <SFML/System/Vector2.hpp>
-#include <gmp/gmp.h>
+#include <mpir/gmp.h>
 
 class MandelbrotRenderer {
 	unsigned char *m_pixelBuffer;
