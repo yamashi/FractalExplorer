@@ -54,6 +54,7 @@ public:
 	const sf::Texture& getTexture(void);
 
 	bool isRendering;
+	bool isOpencl;
 	
 private:
 

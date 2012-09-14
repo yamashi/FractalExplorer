@@ -43,7 +43,8 @@ m_scale(1.0),
 m_resolution(300),
 m_image_x(width),
 m_image_y(heigth),
-m_lastRenderingTime(sf::Time::Zero)
+m_lastRenderingTime(sf::Time::Zero),
+isOpencl(true)
 {
 	m_data = new unsigned char[m_image_x * m_image_y * 4];
 	std::memset(m_data, 0, m_image_x * m_image_y * 4);
@@ -83,18 +84,21 @@ void FractalRenderer::_performRendering(void)
 	sf::Clock timer;
 
 #ifdef OMP_BUILD
-	mpfreal zoom, posx, posy;
+	if(!isOpencl)
+	{
+		mpfreal zoom, posx, posy;
 
 
-	zoom = m_scale;
-	posx = (double)m_normalizedPosition.x;
-	posy = (double)m_normalizedPosition.y;
+		zoom = m_scale;
+		posx = (double)m_normalizedPosition.x;
+		posy = (double)m_normalizedPosition.y;
 
-	MandelbrotRenderer(m_data, m_image_x, m_image_y, zoom, m_resolution, posx, posy)();
-
-#else
-	m_renderer->operator()(m_scale, m_resolution, m_normalizedPosition);
-	
+		MandelbrotRenderer(m_data, m_image_x, m_image_y, zoom, m_resolution, posx, posy)();
+	}
+#endif
+#ifdef CL_BUILD
+	if(isOpencl)
+		m_renderer->operator()(m_scale, m_resolution, m_normalizedPosition);
 #endif
 
 	m_texture.update(m_data);

@@ -51,6 +51,7 @@ class Application {
 	sf::Sprite m_fractalSprite;
 	
 	bool m_panelsAreVisible;
+	bool m_opencl;
 	
 	enum Direction {
 		Left,
@@ -68,6 +69,7 @@ public:
 	void draw(void);
 
 private:
+	void swicthMode(void);
 	void terminate(void);
 	void resetView(void);
 	void takeScreenshot(void);

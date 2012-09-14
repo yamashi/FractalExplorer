@@ -42,6 +42,7 @@ namespace {
 	"Press R to go back to the original view\n" +
 	"Press S to take a screenshot of the current view\n" +
 	"Press H to hide/show the information panels\n" +
+	"Press A to switch between computing modes\n" +
 	"Use arrow keys to move in the fractal";
 	
 	static const sf::Color lightBlue(85, 157, 254);
@@ -69,7 +70,8 @@ m_cameraSoundBuffer(),
 m_callbackSystem(),
 m_actionsTable(window),
 m_fractalRenderer(m_window.getSize().x, m_window.getSize().y),
-m_panelsAreVisible(true)
+m_panelsAreVisible(true),
+m_opencl(true)
 {
 #ifndef WIN32
 	m_textFont.loadFromFile(resourcePath() + "sansation.ttf");
@@ -118,7 +120,8 @@ m_panelsAreVisible(true)
 	m_fractalInfoText.setString(std::string("Rendering parameters\n") +
 								"Zoom: x" + ftostr(zoom_stat) + "\n" +
 								"Precision level: " + ftostr(resolution_stat) + "\n" +
-								"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat));
+								"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat) +
+								"\nOpenCL mode : " + ftostr(m_opencl));
 	m_fractalInfoText.setPosition(10, m_window.getSize().y - m_fractalInfoText.getLocalBounds().height - 10);
 	
 	sf::Vector2f finfoSize = sf::Vector2f(m_fractalInfoText.getGlobalBounds().width + 25,
@@ -133,6 +136,7 @@ m_panelsAreVisible(true)
 	// Define actions
 	m_actionsTable["exit"] = thor::Action(sf::Keyboard::Escape, thor::Action::PressOnce) || thor::Action(sf::Event::Closed);
 	
+	m_actionsTable["swicth mode"] = thor::Action(sf::Keyboard::A, thor::Action::PressOnce);
 	m_actionsTable["reset view"] = thor::Action(sf::Keyboard::R, thor::Action::PressOnce);
 	m_actionsTable["screenshot"] = thor::Action(sf::Keyboard::S, thor::Action::PressOnce);
 	m_actionsTable["toggle panels"] = thor::Action(sf::Keyboard::H, thor::Action::PressOnce);
@@ -149,6 +153,7 @@ m_panelsAreVisible(true)
 	// Connect callbacks
 	m_callbackSystem.connect("exit", std::bind(&Application::terminate, this));
 	
+	m_callbackSystem.connect("swicth mode", std::bind(&Application::swicthMode, this));
 	m_callbackSystem.connect("reset view", std::bind(&Application::resetView, this));
 	m_callbackSystem.connect("screenshot", std::bind(&Application::takeScreenshot, this));
 	m_callbackSystem.connect("toggle panels", std::bind(&Application::togglePanels, this));
@@ -205,9 +210,10 @@ void Application::update(void)
 	double xpos_stat = m_fractalRenderer.getNormalizedPosition().x;
 	double ypos_stat = m_fractalRenderer.getNormalizedPosition().y;
 	m_fractalInfoText.setString(std::string("Rendering parameters\n") +
-								"Zoom: x" + ftostr(zoom_stat) + "\n" +
-								"Precision level: " + ftostr(resolution_stat) + "\n" +
-								"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat));
+		"Zoom: x" + ftostr(zoom_stat) + "\n" +
+		"Precision level: " + ftostr(resolution_stat) + "\n" +
+		"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat) +
+		"\nOpenCL mode : " + ftostr(m_opencl));
 }
 
 void Application::draw(void)
@@ -227,6 +233,13 @@ void Application::draw(void)
 
 #pragma mark -
 #pragma mark Event callbacks
+
+void Application::swicthMode(void)
+{
+	m_opencl = !m_opencl;
+	m_fractalRenderer.isOpencl = m_opencl;
+	m_fractalRenderer.performRendering();
+}
 
 void Application::terminate(void)
 {
