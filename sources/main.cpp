@@ -27,10 +27,12 @@
 
 #include <SFML/Graphics.hpp>
 #include "Application.hpp"
-#include <gmp/gmp.h>
+#include "mpreal.h"
 
 int main()
 {
+	mpfr::mpreal::set_default_prec(128);
+
 	sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Mandelbrot Fractal Explorer", sf::Style::Default);
 	window.setFramerateLimit(60);
 	window.setMouseCursorVisible(false);

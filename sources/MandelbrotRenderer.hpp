@@ -31,20 +31,20 @@
 #ifdef OMP_BUILD
 
 #include <SFML/System/Vector2.hpp>
-#include <gmp/gmp.h>
+#include "mpreal.h"
 
 class MandelbrotRenderer {
 	unsigned char *m_pixelBuffer;
 	unsigned m_pixelBufferWidth;
 	unsigned m_pixelBufferHeigth;
 	
-	mpf_t m_zoom;
+	mpfr::mpreal m_zoom;
 	int m_resolution;
-	mpf_t m_x, m_y;
+	mpfr::mpreal m_x, m_y;
 	
 public:
 	MandelbrotRenderer(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
-					   mpf_t& zoom, int resolution, mpf_t& x, mpf_t& y);
+					   const mpfr::mpreal& zoom, int resolution, const mpfr::mpreal& x, const mpfr::mpreal& y);
 	~MandelbrotRenderer();
 	
 	void operator()() const;
