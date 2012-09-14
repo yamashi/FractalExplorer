@@ -188,10 +188,12 @@ double2 z=c;
 int count;
 for (count=0;count<resolution;count++)
 {
-	if ((z.x*z.x+z.y*z.y)>4.0f) 
+	double x2 = z.x*z.x;
+	double y2 = z.y*z.y;
+	if ((x2+y2)>4.0f) 
 		break;
 	z=(double2)(
-		z.x*z.x-z.y*z.y + c.x,
+		x2-y2 + c.x,
 		2.0f*z.x*z.y + c.y
 		);
 }
