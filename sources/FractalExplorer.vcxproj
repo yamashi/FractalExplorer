@@ -72,9 +72,11 @@
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="epgpu.h" />
+    <ClInclude Include="FPReal.hpp" />
     <ClInclude Include="FractalRenderer.hpp" />
     <ClInclude Include="MandelbrotRenderer.hpp" />
     <ClInclude Include="MandelbrotRendererCL.hpp" />
+    <ClInclude Include="MPBase.h" />
     <ClInclude Include="mpfreal.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

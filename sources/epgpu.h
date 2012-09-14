@@ -988,7 +988,6 @@ public: \
 		dimensions=2; \
 		first_arg=3; /* leave room for (size,destination) prearguments below */ \
 		GPU_ADD_STATIC_CODE( \
-		"#pragma OPENCL EXTENSION cl_khr_fp64 : enable \n" \
 		"__kernel void " #kernelName "(int w,int h,__global " #resultType " *result_array ,<__FILLKERNEL)"#kernelArgs "\n" \
 		"{\n"\
 		"	int i=get_global_id(0);\n" \

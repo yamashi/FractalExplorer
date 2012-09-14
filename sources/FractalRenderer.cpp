@@ -44,7 +44,8 @@ m_resolution(300),
 m_image_x(width),
 m_image_y(heigth),
 m_lastRenderingTime(sf::Time::Zero),
-isOpencl(true)
+isOpencl(true),
+isMultiPrecision(false)
 {
 	m_data = new unsigned char[m_image_x * m_image_y * 4];
 	std::memset(m_data, 0, m_image_x * m_image_y * 4);
@@ -98,7 +99,7 @@ void FractalRenderer::_performRendering(void)
 #endif
 #ifdef CL_BUILD
 	if(isOpencl)
-		m_renderer->operator()(m_scale, m_resolution, m_normalizedPosition);
+		m_renderer->operator()(isMultiPrecision, m_scale, m_resolution, m_normalizedPosition);
 #endif
 
 	m_texture.update(m_data);

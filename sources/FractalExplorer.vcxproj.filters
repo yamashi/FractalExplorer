@@ -59,5 +59,11 @@
     <ClInclude Include="mpfreal.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FPReal.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

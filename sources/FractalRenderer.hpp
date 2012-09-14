@@ -55,6 +55,7 @@ public:
 
 	bool isRendering;
 	bool isOpencl;
+	bool isMultiPrecision;
 	
 private:
 

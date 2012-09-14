@@ -42,7 +42,7 @@ class MandelbrotRendererCL {
 public:
 	MandelbrotRendererCL(unsigned char *pixelBuffer, unsigned width, unsigned heigth);
 	
-	void operator()(double zoom, int resolution, const Vector2lf& normalizedPosition);
+	void operator()(bool fp128, double zoom, int resolution, const Vector2lf& normalizedPosition);
 };
 
 #endif

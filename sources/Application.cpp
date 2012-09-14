@@ -70,8 +70,7 @@ m_cameraSoundBuffer(),
 m_callbackSystem(),
 m_actionsTable(window),
 m_fractalRenderer(m_window.getSize().x, m_window.getSize().y),
-m_panelsAreVisible(true),
-m_opencl(true)
+m_panelsAreVisible(true)
 {
 #ifndef WIN32
 	m_textFont.loadFromFile(resourcePath() + "sansation.ttf");
@@ -118,10 +117,11 @@ m_opencl(true)
 	m_fractalInfoText.setFont(m_textFont);
 	m_fractalInfoText.setColor(lightBlue);
 	m_fractalInfoText.setString(std::string("Rendering parameters\n") +
-								"Zoom: x" + ftostr(zoom_stat) + "\n" +
-								"Precision level: " + ftostr(resolution_stat) + "\n" +
-								"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat) +
-								"\nOpenCL mode : " + ftostr(m_opencl));
+		"Zoom: x" + ftostr(zoom_stat) + "\n" +
+		"Precision level: " + ftostr(resolution_stat) + "\n" +
+		"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat) +
+		"\nOpenCL mode : " + ftostr(m_fractalRenderer.isOpencl) +
+		"\nFP128 mode : " + ftostr(m_fractalRenderer.isMultiPrecision));
 	m_fractalInfoText.setPosition(10, m_window.getSize().y - m_fractalInfoText.getLocalBounds().height - 10);
 	
 	sf::Vector2f finfoSize = sf::Vector2f(m_fractalInfoText.getGlobalBounds().width + 25,
@@ -136,6 +136,7 @@ m_opencl(true)
 	// Define actions
 	m_actionsTable["exit"] = thor::Action(sf::Keyboard::Escape, thor::Action::PressOnce) || thor::Action(sf::Event::Closed);
 	
+	m_actionsTable["swicth fp"] = thor::Action(sf::Keyboard::Q, thor::Action::PressOnce);
 	m_actionsTable["swicth mode"] = thor::Action(sf::Keyboard::A, thor::Action::PressOnce);
 	m_actionsTable["reset view"] = thor::Action(sf::Keyboard::R, thor::Action::PressOnce);
 	m_actionsTable["screenshot"] = thor::Action(sf::Keyboard::S, thor::Action::PressOnce);
@@ -153,6 +154,7 @@ m_opencl(true)
 	// Connect callbacks
 	m_callbackSystem.connect("exit", std::bind(&Application::terminate, this));
 	
+	m_callbackSystem.connect("swicth fp", std::bind(&Application::swicthFp, this));
 	m_callbackSystem.connect("swicth mode", std::bind(&Application::swicthMode, this));
 	m_callbackSystem.connect("reset view", std::bind(&Application::resetView, this));
 	m_callbackSystem.connect("screenshot", std::bind(&Application::takeScreenshot, this));
@@ -213,7 +215,8 @@ void Application::update(void)
 		"Zoom: x" + ftostr(zoom_stat) + "\n" +
 		"Precision level: " + ftostr(resolution_stat) + "\n" +
 		"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat) +
-		"\nOpenCL mode : " + ftostr(m_opencl));
+		"\nOpenCL mode : " + ftostr(m_fractalRenderer.isOpencl) +
+		"\nFP128 mode : " + ftostr(m_fractalRenderer.isMultiPrecision));
 }
 
 void Application::draw(void)
@@ -236,8 +239,13 @@ void Application::draw(void)
 
 void Application::swicthMode(void)
 {
-	m_opencl = !m_opencl;
-	m_fractalRenderer.isOpencl = m_opencl;
+	m_fractalRenderer.isOpencl = !m_fractalRenderer.isOpencl;
+	m_fractalRenderer.performRendering();
+}
+
+void Application::swicthFp(void)
+{
+	m_fractalRenderer.isMultiPrecision = !m_fractalRenderer.isMultiPrecision;
 	m_fractalRenderer.performRendering();
 }
 

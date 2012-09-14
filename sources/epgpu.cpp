@@ -84,7 +84,7 @@ cl_device_id  ocdInit(cl_context *new_context,cl_command_queue *new_queue)
 	cl_uint targetDevice = 0;  // default device to compute on
 	cl_uint nUnits;            // number of compute units (SM's on NV GPU)
 
-	int devtype=CL_DEVICE_TYPE_ALL; // <- or just TYPE_GPU;
+	int devtype=CL_DEVICE_TYPE_GPU; // <- or just TYPE_GPU;
 	ocdErr( clGetDeviceIDs(cpPlatform, devtype, 0, NULL, &nDevices) );
 	cl_device_id* devs = new cl_device_id[nDevices];
 	ocdErr( clGetDeviceIDs(cpPlatform, devtype, nDevices, devs, NULL) );
