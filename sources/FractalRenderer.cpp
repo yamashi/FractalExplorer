@@ -83,19 +83,15 @@ void FractalRenderer::_performRendering(void)
 	sf::Clock timer;
 
 #ifdef OMP_BUILD
-	mpf_t zoom, posx, posy;
-	mpf_init(zoom);
-	mpf_init(posx);
-	mpf_init(posy);
+	mpfreal zoom, posx, posy;
 
-	mpf_set_d(zoom, m_scale);
-	mpf_set_d(posx, m_normalizedPosition.x);
-	mpf_set_d(posy, m_normalizedPosition.y);
+
+	zoom = m_scale;
+	posx = (double)m_normalizedPosition.x;
+	posy = (double)m_normalizedPosition.y;
+
 	MandelbrotRenderer(m_data, m_image_x, m_image_y, zoom, m_resolution, posx, posy)();
 
-	mpf_clear(zoom);
-	mpf_clear(posx);
-	mpf_clear(posy);
 #else
 	m_renderer->operator()(m_scale, m_resolution, m_normalizedPosition);
 	

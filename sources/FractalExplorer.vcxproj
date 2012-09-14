@@ -66,6 +66,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MandelbrotRenderer.cpp" />
     <ClCompile Include="MandelbrotRendererCL.cpp" />
+    <ClCompile Include="mpfreal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="FractalRenderer.hpp" />
     <ClInclude Include="MandelbrotRenderer.hpp" />
     <ClInclude Include="MandelbrotRendererCL.hpp" />
+    <ClInclude Include="mpfreal.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
