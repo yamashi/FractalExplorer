@@ -40,7 +40,7 @@ m_data(NULL),
 m_texture(),
 m_normalizedPosition(0.4, 0.5),
 m_scale(1.0),
-m_resolution(30),
+m_resolution(300),
 m_image_x(width),
 m_image_y(heigth),
 m_lastRenderingTime(sf::Time::Zero)

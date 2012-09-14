@@ -78,16 +78,16 @@ void MandelbrotRendererCL::operator()(double zoom, int resolution,const Vector2l
 			if (ca[y * m_pixelBufferWidth + x] == resolution)
 			{
 				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 0] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 1] = 54;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = 76;
+				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 1] = 0;
+				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = 0;
 				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 3] = 255;
 			}
 			else
 			{
 				int val = ca[y * m_pixelBufferWidth + x] * 255 / resolution;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 0] = 0;
+				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 0] = val;
 				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 1] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = val;
+				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = 0;
 				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 3] = 255;
 			}
 		}

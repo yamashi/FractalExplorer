@@ -6,7 +6,7 @@
 
 typedef sf::Vector2<long double>        Vector2lf;
 
-//#define CL_BUILD
-#define OMP_BUILD
+#define CL_BUILD
+//#define OMP_BUILD
 
 #endif
