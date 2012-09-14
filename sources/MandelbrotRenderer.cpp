@@ -134,7 +134,7 @@ void MandelbrotRenderer::operator()() const
 
 				mpf_sub(*result, *localTmp, *localTmp2); // tx = zx * zx - zy * zy
 				mpf_add(*localTmp2, *result, *cx); // result = zx * zx - zy * zy + cx
-				
+			
 				mpf_mul(*localTmp, *zx, *const2); // localTmp = zx * 2.0
 				mpf_mul(*result, *localTmp, *zy); // result = zx * 2 * zy
 				mpf_add(*zy, *result, *cy); //zy = zx * 2 * zy + cy

@@ -209,6 +209,8 @@ GPU_FILLKERNEL_2D(unsigned int,
 	uint4 zoominv = vload4(2, coords);
 	uint4 xoff = vload4(3, coords);
 	uint4 yoff = vload4(4, coords);
+	uint4 fractal_left = vload4(5, coords);
+	uint4 fractal_bottom = vload4(6, coords);
 
 	if(xsign < 0) xoff = neg128(xoff);
 	if(ysign < 0) yoff = neg128(yoff);
@@ -217,16 +219,16 @@ GPU_FILLKERNEL_2D(unsigned int,
 	uint4 fh = mul128(sz, h);
 
 	uint4 cx = mulfp(fw ,xoff);
-	cx = add128(cx, set128(-w/2));
+	cx = add128(cx, neg128(set128(w/2)));
 	cx = add128(cx, set128(i));
 	cx = mulfp(cx, zoominv);
-	cx = add128(cx, set128(-2.1));
+	cx = add128(cx, neg128(fractal_left));
 
 	uint4 cy = mulfp(fh ,yoff);
-	cy = add128(cy, set128(-h/2));
+	cy = add128(cy, neg128(set128(h/2)));
 	cy = add128(cy, set128(j));
 	cy = mulfp(cy, zoominv);
-	cy = add128(cy, set128(-1.2));
+	cy = add128(cy, neg128(fractal_bottom));
 
 	uint4 zx = cx;
 	uint4 zy = cy;
@@ -260,14 +262,16 @@ void MandelbrotRendererCL::operator()(bool fp128, double zoom, int resolution,co
 {
 	if(fp128)
 	{
-		gpu_vector<unsigned int> coords(20);
-		unsigned int xcoords[20];
+		gpu_vector<unsigned int> coords(28);
+		unsigned int xcoords[28];
 
 		FPReal<8> fpZoom(zoom);
 		FPReal<8> fpZoom2(zoom * m_pixelBufferHeigth / (2.4));
 		FPReal<8> fpZoom2Inv(1.0 / (zoom * m_pixelBufferHeigth / (2.4)));
 		FPReal<8> posX((double)normalizedPosition.x);
 		FPReal<8> posY((double)normalizedPosition.y);
+		FPReal<8> offsetX(-2.1);
+		FPReal<8> offsetY(-1.2);
 
 		int posYsign = posY.sgn();
 		int posXsign = posX.sgn();
@@ -277,8 +281,10 @@ void MandelbrotRendererCL::operator()(bool fp128, double zoom, int resolution,co
 		fpZoom2Inv.getWords(4, xcoords + 8);
 		posX.getWords(4, xcoords + 12);
 		posY.getWords(4, xcoords + 16);
+		offsetX.getWords(4, xcoords + 20);
+		offsetY.getWords(4, xcoords + 24);
 
-		coords.write(xcoords, 0, 20);
+		coords.write(xcoords, 0, 28);
 
 		m_img = mandelbrot_fp128(coords, posXsign, posYsign, resolution);
 	}
