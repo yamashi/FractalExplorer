@@ -24,16 +24,19 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MandelbrotRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MandelbrotRendererCL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="epgpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mpfreal.cpp">
+    <ClCompile Include="Configuration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\MandelbrotRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\MandelbrotRendererCL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Real\mpfreal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,25 +47,31 @@
     <ClInclude Include="FractalRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MandelbrotRenderer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Common.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MandelbrotRendererCL.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="epgpu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mpfreal.hpp">
+    <ClInclude Include="Configuration.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FPReal.hpp">
+    <ClInclude Include="Renderer\MandelbrotRendererCL.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPBase.h">
+    <ClInclude Include="Renderer\MandelbrotRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Real\mpfreal.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Real\MPBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Real\FPReal.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\IRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

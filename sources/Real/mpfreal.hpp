@@ -1,6 +1,6 @@
 /*
  *  MandelbrotRendererCL.hpp
- *	Mandelbrot Fractal Explorer Project - Copyright (c) 2012 Lucas Soltic & Maxime Griot
+ *	Hyper Compute - Copyright (c) 2012 Maxime Griot
  *
  *  This software is provided 'as-is', without any express or
  *  implied warranty. In no event will the authors be held
@@ -23,27 +23,49 @@
  *  source distribution.
  */
 
-#include "Common.hpp"
-#ifdef CL_BUILD
+#pragma once
 
-#ifndef MANDELBROT_RENDERER_CL_HPP
-#define MANDELBROT_RENDERER_CL_HPP
+#include <mpir/gmp.h>
 
-#include <SFML/System/Vector2.hpp>
-#include "epgpu.h"
+class mpfreal
+{
+	mpf_t mImpl;
 
-class MandelbrotRendererCL {
-	unsigned char *m_pixelBuffer;
-	unsigned m_pixelBufferWidth;
-	unsigned m_pixelBufferHeigth;
-
-	gpu_vector2d<unsigned int> m_img;
-	
 public:
-	MandelbrotRendererCL(unsigned char *pixelBuffer, unsigned width, unsigned heigth);
-	
-	void operator()(bool fp128, double zoom, int resolution, const Vector2lf& normalizedPosition);
-};
 
-#endif
-#endif
+	mpfreal();
+	mpfreal(const mpfreal& val);
+	~mpfreal();
+
+	const mpf_ptr operator*() const; 
+
+	template <class T>
+	T get();
+
+	template <>
+	double get()
+	{
+		return mpf_get_d(mImpl);
+	}
+
+
+	void operator=(const mpfreal& val)
+	{
+		mpf_set(this->mImpl, *val);
+	}
+
+	void operator=(double val)
+	{
+		mpf_set_d(this->mImpl, val);
+	}
+
+	void operator=(int val)
+	{
+		mpf_set_si(this->mImpl, val);
+	}
+
+	void operator=(const char* val)
+	{
+		mpf_set_str(this->mImpl, val, 10);
+	}
+};

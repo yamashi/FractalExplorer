@@ -26,7 +26,7 @@
  * Altered by Maxime Griot
  */
 
-#include "Common.hpp"
+#include "../Common.hpp"
 
 #ifdef OMP_BUILD
 
@@ -34,35 +34,22 @@
 #include <iostream>
 #include <SFML/System.hpp>
 
-MandelbrotRenderer::MandelbrotRenderer(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
-									   mpfreal& zoom, int resolution, mpfreal& x, mpfreal& y):
-m_pixelBuffer(pixelBuffer),
-m_pixelBufferWidth(width),
-m_pixelBufferHeigth(heigth),
-m_resolution(resolution),
-m_zoom(zoom),
-m_x(x),
-m_y(y)
-{
-}
-
-MandelbrotRenderer::~MandelbrotRenderer()
-{
-}
-
 struct ldouble2
 {
 	long double x;
 	long double y;
 };
 
-void MandelbrotRenderer::operator()() const
+void MandelbrotRenderer::render(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
+	mpfreal& zoom, int resolution, mpfreal& x, mpfreal& y)
 {
 	const long double fractal_left = -2.1;
 	const long double fractal_right = 0.6;
 	const long double fractal_bottom = -1.2;
 	const long double fractal_top = 1.2;
 
+	int counter = 0;
+	int percentage = 0;
 	mpfreal zoom_y;
 	mpfreal fractal_width; 
 	mpfreal fractal_heigth;
@@ -70,18 +57,18 @@ void MandelbrotRenderer::operator()() const
 	mpfreal const2;
 	const2 = 2.0;
 
-	tmp = double(m_pixelBufferHeigth) / 2.4;
-	mpf_mul(*zoom_y, *m_zoom, *tmp); // zoom_y = m_zoom * double(m_pixelBufferHeigth) / (fractal_top - fractal_bottom)
+	tmp = double(heigth) / 2.4;
+	mpf_mul(*zoom_y, *zoom, *tmp); // zoom_y = m_zoom * double(m_pixelBufferHeigth) / (fractal_top - fractal_bottom)
 	
-	tmp = (int)m_pixelBufferWidth;
-	mpf_mul(*fractal_width, *tmp, *m_zoom);
+	tmp = (int)width;
+	mpf_mul(*fractal_width, *tmp, *zoom);
 
-	tmp = (int)m_pixelBufferHeigth;
-	mpf_mul(*fractal_heigth, *tmp, *m_zoom);
+	tmp = (int)heigth;
+	mpf_mul(*fractal_heigth, *tmp, *zoom);
 
 	
 	#pragma omp parallel for
-	for (int image_x = 0; image_x < m_pixelBufferWidth; ++image_x)
+	for (int image_x = 0; image_x < width; ++image_x)
 	{
 		mpfreal result; 
 
@@ -94,9 +81,9 @@ void MandelbrotRenderer::operator()() const
 		mpfreal cx, cy; 
 		mpfreal zx, zy; 
 
-		localTmp = (int)m_pixelBufferWidth / 2;
+		localTmp = (int)width / 2;
 
-		mpf_mul(*fractal_x, *fractal_width, *m_x); //fractal_x = fractal_width * m_x
+		mpf_mul(*fractal_x, *fractal_width, *x); //fractal_x = fractal_width * m_x
 		mpf_sub(*result, *fractal_x, *localTmp); // result = fractal_width * m_x - (m_pixelBufferWidth / 2);
 		mpf_add_ui(*fractal_x, *result, image_x); // fractal_x = fractal_width * m_x - (m_pixelBufferWidth / 2) + image_x;
 
@@ -106,10 +93,10 @@ void MandelbrotRenderer::operator()() const
 		mpf_add(*result, *cx, *localTmp); // result = cx + fractal_left
 		mpf_set(*cx, *result);
 
-		for (int image_y = 0; image_y < m_pixelBufferHeigth; ++image_y)
+		for (int image_y = 0; image_y < heigth; ++image_y)
 		{			
-			localTmp = (int)m_pixelBufferHeigth / 2;
-			mpf_mul(*fractal_y, *fractal_heigth, *m_y); //fractal_y = fractal_height * m_y
+			localTmp = (int)heigth / 2;
+			mpf_mul(*fractal_y, *fractal_heigth, *y); //fractal_y = fractal_height * m_y
 			mpf_sub(*result, *fractal_y, *localTmp); // result = fractal_height * m_y - (m_pixelBufferHeigth / 2);
 			mpf_add_ui(*fractal_y, *result, image_y); // fractal_y = fractal_height * m_y - (m_pixelBufferHeigth / 2) + image_y;
 			
@@ -123,7 +110,7 @@ void MandelbrotRenderer::operator()() const
 			zy = cy;
 
 			int count;
-			for (count=0;count<m_resolution;++count)
+			for (count=0;count<resolution;++count)
 			{
 				mpf_mul(*localTmp, *zx, *zx); // zx * zx
 				mpf_mul(*localTmp2, *zy, *zy); // zy * zy
@@ -142,24 +129,36 @@ void MandelbrotRenderer::operator()() const
 				zx = localTmp2;
 			}
 		
-			if (count == m_resolution)
+			if (count == resolution)
 			{
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 0] = 0;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 1] = 0;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 2] = 0;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 3] = 255;
+				pixelBuffer[(image_y * width + image_x) * 4 + 0] = 0;
+				pixelBuffer[(image_y * width + image_x) * 4 + 1] = 0;
+				pixelBuffer[(image_y * width + image_x) * 4 + 2] = 0;
+				pixelBuffer[(image_y * width + image_x) * 4 + 3] = 255;
 			}
 			else
 			{
-				int val = count * 255 / m_resolution;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 0] = val;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 1] = 0;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 2] = 0;
-				m_pixelBuffer[(image_y * m_pixelBufferWidth + image_x) * 4 + 3] = 255;
+				int val = count * 255 / resolution;
+				pixelBuffer[(image_y * width + image_x) * 4 + 0] = val;
+				pixelBuffer[(image_y * width + image_x) * 4 + 1] = 0;
+				pixelBuffer[(image_y * width + image_x) * 4 + 2] = 0;
+				pixelBuffer[(image_y * width + image_x) * 4 + 3] = 255;
 			}
 
 
 		}
+
+#pragma omp critical
+		{
+			++counter;
+			if(counter >= width/20)
+			{
+				percentage += 5;
+				counter = 0;
+				std::cout << "\xd" << percentage << "% done";
+			}
+		}
+		
 	}
 }
 

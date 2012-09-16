@@ -1,7 +1,6 @@
-
 /*
- *  MandelbrotRenderer.hpp
- *	Mandelbrot Fractal Explorer Project - Copyright (c) 2012 Lucas Soltic
+ *  MandelbrotRendererCL.hpp
+ *	Mandelbrot Fractal Explorer Project - Copyright (c) 2012 Lucas Soltic & Maxime Griot
  *
  *  This software is provided 'as-is', without any express or
  *  implied warranty. In no event will the authors be held
@@ -22,35 +21,23 @@
  *
  *  3. This notice may not be removed or altered from any
  *  source distribution.
- *
  */
 
-#ifndef MANDELBROT_RENDERER_HPP
-#define MANDELBROT_RENDERER_HPP
+#include "../Common.hpp"
+#ifdef CL_BUILD
 
-#ifdef OMP_BUILD
+#ifndef MANDELBROT_RENDERER_CL_HPP
+#define MANDELBROT_RENDERER_CL_HPP
 
 #include <SFML/System/Vector2.hpp>
-#include <mpir/gmp.h>
-#include "mpfreal.hpp"
+#include "../epgpu.h"
+#include "IRenderer.hpp"
 
-class MandelbrotRenderer {
-	unsigned char *m_pixelBuffer;
-	unsigned m_pixelBufferWidth;
-	unsigned m_pixelBufferHeigth;
-	
-	mpfreal m_zoom;
-	int m_resolution;
-	mpfreal m_x, m_y;
-	
+class MandelbrotRendererCL : public IRenderer {	
 public:
-	MandelbrotRenderer(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
-					   mpfreal& zoom, int resolution, mpfreal& x, mpfreal& y);
-	~MandelbrotRenderer();
-	
-	void operator()() const;
+	void render(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
+		mpfreal& zoom, int resolution, mpfreal& x, mpfreal& y);
 };
 
 #endif
-
 #endif

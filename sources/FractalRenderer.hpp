@@ -31,10 +31,6 @@
 #include <SFML/Graphics.hpp>
 #include "Common.hpp"
 
-#ifdef CL_BUILD
-#include "MandelbrotRendererCL.hpp"
-#endif
-
 class FractalRenderer {
 public:
 	FractalRenderer(unsigned width, unsigned height);
@@ -43,9 +39,11 @@ public:
 	void performRendering(void);
 	
 	void setZoom(double zoom);
+	void setMode(bool mode);
 	void setNormalizedPosition(Vector2lf normalizedPosition);
 	void setResolution(int resolution);
 	
+	bool getMode(void) const;
 	double getZoom(void);
 	const Vector2lf& getNormalizedPosition(void);
 	int getResolution(void);
@@ -54,7 +52,6 @@ public:
 	const sf::Texture& getTexture(void);
 
 	bool isRendering;
-	bool isOpencl;
 	bool isMultiPrecision;
 	
 private:
@@ -70,12 +67,9 @@ private:
 	int m_resolution;
 	int m_image_x;
 	int m_image_y;
+	bool m_mode;
 	
 	sf::Time m_lastRenderingTime;
-
-#ifdef CL_BUILD
-	std::unique_ptr<MandelbrotRendererCL> m_renderer;
-#endif
 	
 };
 

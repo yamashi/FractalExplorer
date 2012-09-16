@@ -28,23 +28,21 @@
  */
 
 #include "FractalRenderer.hpp"
-#ifdef OMP_BUILD
-#include "MandelbrotRenderer.hpp"
-#include <tbb/parallel_for.h>
-#endif
+#include "Renderer/MandelbrotRendererCL.hpp"
+#include "Renderer/MandelbrotRenderer.hpp"
 #include <iostream>
 
 
 FractalRenderer::FractalRenderer(unsigned width, unsigned heigth) :
 m_data(NULL),
 m_texture(),
-m_normalizedPosition(0.4, 0.5),
+m_normalizedPosition(0.310617, 0.435056),
 m_scale(1.0),
-m_resolution(300),
+m_resolution(100),
 m_image_x(width),
 m_image_y(heigth),
 m_lastRenderingTime(sf::Time::Zero),
-isOpencl(true),
+m_mode(true),
 isMultiPrecision(false)
 {
 	m_data = new unsigned char[m_image_x * m_image_y * 4];
@@ -58,15 +56,11 @@ isMultiPrecision(false)
 	{
 		std::cout << "texture size is too big for your crapy graphics card" << std::endl;
 	}
-
-#ifdef CL_BUILD
-	m_renderer.reset(new MandelbrotRendererCL(m_data, m_image_x, m_image_y));
-#endif
 }
 
 FractalRenderer::~FractalRenderer()
 {
-	delete m_data;
+	delete[] m_data;
 }
 
 #include <cstdio>
@@ -79,28 +73,23 @@ void FractalRenderer::performRendering()
 void FractalRenderer::_performRendering(void)
 {
 	isRendering = true;
-	printf("data=%p, width=%d, heigth=%d, zoom=%f, resolution=%d, posx=%f, posy=%f\n",
-		   m_data, m_image_x, m_image_y, m_scale, m_resolution, m_normalizedPosition.x, m_normalizedPosition.y);
-	
 	sf::Clock timer;
 
-#ifdef OMP_BUILD
-	if(!isOpencl)
-	{
-		mpfreal zoom, posx, posy;
+	IRenderer* renderer = nullptr;
+	if(m_mode)
+		renderer = new MandelbrotRendererCL;
+	else
+		renderer = new MandelbrotRenderer;
 
+	mpfreal zoom, posx, posy;
 
-		zoom = m_scale;
-		posx = (double)m_normalizedPosition.x;
-		posy = (double)m_normalizedPosition.y;
+	zoom = m_scale;
+	posx = (double)m_normalizedPosition.x;
+	posy = (double)m_normalizedPosition.y;
 
-		MandelbrotRenderer(m_data, m_image_x, m_image_y, zoom, m_resolution, posx, posy)();
-	}
-#endif
-#ifdef CL_BUILD
-	if(isOpencl)
-		m_renderer->operator()(isMultiPrecision, m_scale, m_resolution, m_normalizedPosition);
-#endif
+	renderer->render(m_data, m_image_x, m_image_y, zoom, m_resolution, posx, posy);
+
+	delete renderer;
 
 	m_texture.update(m_data);
 	
@@ -114,6 +103,10 @@ void FractalRenderer::setZoom(double zoom)
 	m_scale = zoom;
 }
 
+void FractalRenderer::setMode(bool mode)
+{
+	m_mode = mode;
+}
 
 void FractalRenderer::setNormalizedPosition(Vector2lf normalizedPosition)
 {
@@ -132,6 +125,11 @@ double FractalRenderer::getZoom(void)
 	return m_scale;
 }
 
+
+bool FractalRenderer::getMode() const
+{
+	return m_mode;
+}
 
 const Vector2lf& FractalRenderer::getNormalizedPosition(void)
 {

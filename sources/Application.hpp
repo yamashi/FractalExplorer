@@ -32,6 +32,7 @@
 #include <SFML/Audio.hpp>
 #include <Thor/Events.hpp>
 #include "FractalRenderer.hpp"
+#include "Configuration.hpp"
 
 class Application {
 	sf::RenderWindow& m_window;
@@ -60,14 +61,17 @@ class Application {
 	};
 	
 public:
-	Application(sf::RenderWindow& window);
+	Application(sf::RenderWindow& window, int argc, char** argv);
 	~Application(void);
 	
 	void handleEvents(void);
 	void update(void);
 	void draw(void);
+	void load(const Configuration& conf);
 
 private:
+	void _parse(int argc, char** argv);
+
 	void swicthFp(void);
 	void swicthMode(void);
 	void terminate(void);

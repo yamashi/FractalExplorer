@@ -57,7 +57,7 @@ std::string ftostr(const T& obj)
 	return ss.str();
 }
 
-Application::Application(sf::RenderWindow& window) :
+Application::Application(sf::RenderWindow& window, int argc, char** argv) :
 m_window(window),
 m_textFont(),
 m_infoText(),
@@ -79,6 +79,8 @@ m_panelsAreVisible(true)
 	m_textFont.loadFromFile("sansation.ttf");
 	m_cameraSoundBuffer.loadFromFile("camera.wav");
 #endif
+
+	_parse(argc - 1, argv + 1);
 
 	m_infoText.setCharacterSize(18);
 	m_infoText.setStyle(sf::Text::Regular);
@@ -120,7 +122,7 @@ m_panelsAreVisible(true)
 		"Zoom: x" + ftostr(zoom_stat) + "\n" +
 		"Precision level: " + ftostr(resolution_stat) + "\n" +
 		"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat) +
-		"\nOpenCL mode : " + ftostr(m_fractalRenderer.isOpencl) +
+		"\nOpenCL mode : " + ftostr(m_fractalRenderer.getMode()) +
 		"\nFP128 mode : " + ftostr(m_fractalRenderer.isMultiPrecision));
 	m_fractalInfoText.setPosition(10, m_window.getSize().y - m_fractalInfoText.getLocalBounds().height - 10);
 	
@@ -177,6 +179,29 @@ Application::~Application(void)
 	
 }
 
+void Application::_parse(int argc, char** argv)
+{
+	if(argc == 0) return;
+	std::string arg(*argv);
+	if(arg == std::string("-c") && argc > 1)
+	{
+		--argc; ++argv;
+		std::string conf(*argv);
+		Configuration config;
+		config.deserialize(conf);
+		load(config);
+	}
+
+	_parse(argc - 1, argv + 1);
+}
+
+void Application::load(const Configuration& conf)
+{
+	m_fractalRenderer.setZoom(conf.zoom);
+	m_fractalRenderer.setNormalizedPosition(Vector2lf(conf.x, conf.y));
+	m_fractalRenderer.setResolution(conf.resolution);
+}
+
 void Application::handleEvents(void)
 {
 	m_actionsTable.update();
@@ -215,7 +240,7 @@ void Application::update(void)
 		"Zoom: x" + ftostr(zoom_stat) + "\n" +
 		"Precision level: " + ftostr(resolution_stat) + "\n" +
 		"Position: " + ftostr(xpos_stat) + " ; " + ftostr(ypos_stat) +
-		"\nOpenCL mode : " + ftostr(m_fractalRenderer.isOpencl) +
+		"\nOpenCL mode : " + ftostr(m_fractalRenderer.getMode()) +
 		"\nFP128 mode : " + ftostr(m_fractalRenderer.isMultiPrecision));
 }
 
@@ -239,14 +264,20 @@ void Application::draw(void)
 
 void Application::swicthMode(void)
 {
-	m_fractalRenderer.isOpencl = !m_fractalRenderer.isOpencl;
+	m_fractalRenderer.setMode(!m_fractalRenderer.getMode());
 	m_fractalRenderer.performRendering();
 }
 
 void Application::swicthFp(void)
 {
-	m_fractalRenderer.isMultiPrecision = !m_fractalRenderer.isMultiPrecision;
-	m_fractalRenderer.performRendering();
+	/*m_fractalRenderer.isMultiPrecision = !m_fractalRenderer.isMultiPrecision;
+	m_fractalRenderer.performRendering();*/
+	Configuration conf;
+	conf.resolution = m_fractalRenderer.getResolution();
+	conf.x = m_fractalRenderer.getNormalizedPosition().x;
+	conf.y = m_fractalRenderer.getNormalizedPosition().y;
+	conf.zoom = m_fractalRenderer.getZoom();
+	conf.serialize(std::string("conf-") + ftostr(time(NULL)) + ".ml");
 }
 
 void Application::terminate(void)

@@ -1,6 +1,7 @@
+
 /*
- *  MandelbrotRendererCL.hpp
- *	Hyper Compute - Copyright (c) 2012 Maxime Griot
+ *  MandelbrotRenderer.hpp
+ *	Mandelbrot Fractal Explorer Project - Copyright (c) 2012 Lucas Soltic
  *
  *  This software is provided 'as-is', without any express or
  *  implied warranty. In no event will the authors be held
@@ -21,42 +22,25 @@
  *
  *  3. This notice may not be removed or altered from any
  *  source distribution.
+ *
  */
 
-#pragma once
+#ifndef MANDELBROT_RENDERER_HPP
+#define MANDELBROT_RENDERER_HPP
 
+#ifdef OMP_BUILD
+
+#include "IRenderer.hpp"
+#include <SFML/System/Vector2.hpp>
 #include <mpir/gmp.h>
 
-class mpfreal
-{
-	mpf_t mImpl;
-
+class MandelbrotRenderer : public IRenderer {	
 public:
-
-	mpfreal();
-	mpfreal(const mpfreal& val);
-	~mpfreal();
-
-	const mpf_ptr operator*() const; 
-
-
-	void operator=(const mpfreal& val)
-	{
-		mpf_set(this->mImpl, *val);
-	}
-
-	void operator=(double val)
-	{
-		mpf_set_d(this->mImpl, val);
-	}
-
-	void operator=(int val)
-	{
-		mpf_set_si(this->mImpl, val);
-	}
-
-	void operator=(const char* val)
-	{
-		mpf_set_str(this->mImpl, val, 10);
-	}
+	
+	virtual void render(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
+					   mpfreal& zoom, int resolution, mpfreal& x, mpfreal& y);
 };
+
+#endif
+
+#endif

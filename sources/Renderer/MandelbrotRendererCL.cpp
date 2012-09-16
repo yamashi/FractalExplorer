@@ -25,13 +25,13 @@
  *
  */
 
-#include "Common.hpp"
+#include "../Common.hpp"
 #ifdef CL_BUILD
 
 #include "MandelbrotRendererCL.hpp"
 #include <iostream>
 #include <SFML/System.hpp>
-#include "FPReal.hpp"
+#include "../Real/FPReal.hpp"
 
 GPU_ADD_STATIC_CODE(
 	"#pragma OPENCL EXTENSION cl_khr_fp64 : enable\n"
@@ -251,18 +251,10 @@ for (count=0;count<resolution;count++)
 result=count;
 )
 
-MandelbrotRendererCL::MandelbrotRendererCL(unsigned char *pixelBuffer, unsigned width, unsigned heigth):
-m_pixelBuffer(pixelBuffer),
-m_pixelBufferWidth(width),
-m_pixelBufferHeigth(heigth),
-m_img(width, heigth)
+void MandelbrotRendererCL::render(unsigned char *pixelBuffer, unsigned width, unsigned heigth,
+	mpfreal& zoom, int resolution, mpfreal& x, mpfreal& y)
 {
-}
-
-
-void MandelbrotRendererCL::operator()(bool fp128, double zoom, int resolution,const Vector2lf& normalizedPosition)
-{
-	if(fp128)
+	/*if(fp128)
 	{
 		gpu_vector<unsigned int> coords(28);
 		unsigned int xcoords[28];
@@ -290,29 +282,30 @@ void MandelbrotRendererCL::operator()(bool fp128, double zoom, int resolution,co
 
 		m_img = mandelbrot_fp128(coords, posXsign, posYsign, resolution);
 	}
-	else
-		m_img = mandelbrot(zoom, zoom * m_pixelBufferHeigth / (2.4),normalizedPosition.x,normalizedPosition.y, resolution);
+	else*/
+	gpu_vector2d<unsigned int> img(width, heigth);
+	img = mandelbrot(zoom.get<double>(), zoom.get<double>() * heigth / (2.4),x.get<double>(),y.get<double>(), resolution);
 	
 
-	unsigned int* ca = new unsigned int[m_pixelBufferWidth*m_pixelBufferHeigth];
-	m_img.read(ca);
-	for(unsigned x = 0; x < m_pixelBufferWidth;++x)
-		for(unsigned y = 0; y < m_pixelBufferHeigth;++y)
+	unsigned int* ca = new unsigned int[width*heigth];
+	img.read(ca);
+	for(unsigned x = 0; x < width;++x)
+		for(unsigned y = 0; y < heigth;++y)
 		{
-			if (ca[y * m_pixelBufferWidth + x] == resolution)
+			if (ca[y * width + x] == resolution)
 			{
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 0] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 1] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 3] = 255;
+				pixelBuffer[(y * width + x) * 4 + 0] = 0;
+				pixelBuffer[(y * width + x) * 4 + 1] = 0;
+				pixelBuffer[(y * width + x) * 4 + 2] = 0;
+				pixelBuffer[(y * width + x) * 4 + 3] = 255;
 			}
 			else
 			{
-				int val = ca[y * m_pixelBufferWidth + x] * 255 / resolution;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 0] = val;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 1] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 2] = 0;
-				m_pixelBuffer[(y * m_pixelBufferWidth + x) * 4 + 3] = 255;
+				int val = ca[y * width + x] * 255 / resolution;
+				pixelBuffer[(y * width + x) * 4 + 0] = val;
+				pixelBuffer[(y * width + x) * 4 + 1] = 0;
+				pixelBuffer[(y * width + x) * 4 + 2] = 0;
+				pixelBuffer[(y * width + x) * 4 + 3] = 255;
 			}
 		}
 

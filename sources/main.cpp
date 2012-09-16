@@ -28,14 +28,19 @@
 #include <SFML/Graphics.hpp>
 #include "Application.hpp"
 #include <mpir/gmp.h>
+#include <vector>
+#include <string>
 
-int main()
+
+int main(int argc, char** argv)
 {
+	mpf_set_default_prec(512);
+
 	sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Mandelbrot Fractal Explorer", sf::Style::Default);
 	window.setFramerateLimit(60);
 	window.setMouseCursorVisible(false);
 	
-	Application app(window);
+	Application app(window, argc, argv);
 	
 	while (window.isOpen())
 	{
