@@ -90,8 +90,7 @@ void MandelbrotRenderer::render(unsigned char *pixelBuffer, unsigned width, unsi
 		localTmp = (double)fractal_left;
 
 		mpf_div(*cx, *fractal_x,*zoom_y); // cx = fractal_x/zoom_y;
-		mpf_add(*result, *cx, *localTmp); // result = cx + fractal_left
-		mpf_set(*cx, *result);
+		mpf_add(*cx, *cx, *localTmp); // cx = cx + fractal_left
 
 		for (int image_y = 0; image_y < heigth; ++image_y)
 		{			
@@ -103,13 +102,12 @@ void MandelbrotRenderer::render(unsigned char *pixelBuffer, unsigned width, unsi
 			localTmp = (double)fractal_bottom;
 
 			mpf_div(*cy, *fractal_y,*zoom_y); // cx = fractal_y/zoom_y;
-			mpf_add(*result, *cy, *localTmp); // result = cy + fractal_bottom
-			cy = result;
+			mpf_add(*cy, *cy, *localTmp); // result = cy + fractal_bottom
 
 			zx = cx;
 			zy = cy;
 
-			int count;
+			unsigned int count;
 			for (count=0;count<resolution;++count)
 			{
 				mpf_mul(*localTmp, *zx, *zx); // zx * zx
